@@ -83,8 +83,8 @@ CREATE TABLE class_schedule (
                                 professor_id INT,
                                 classroom VARCHAR(20),
                                 class_date DATE,
-                                start_time TIME,
-                                end_time TIME,
+                                start_time TIME without time zone,
+                                end_time TIME without time zone,
                                 duration INTERVAL
 );
 
@@ -137,29 +137,96 @@ ALTER TABLE student_records
     ADD COLUMN final_exam_date DATE,
     DROP COLUMN last_updated;
 
--- PART 4: Table Management (constraints, FKs, indexes)
-ALTER TABLE enrollments
-    ADD CONSTRAINT fk_enr_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
-    ADD CONSTRAINT fk_enr_course FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE;
+-- PART 4:
+--Task 4.1:
+CREATE TABLE departments (
+                             department_id SERIAL PRIMARY KEY,
+                             department_name varchar(100),
+                             department_code char(5),
+                             building varchar(50),
+                             phone varchar(15),
+                             budget decimal(15, 2),
+                             established_year int
+);
 
-ALTER TABLE teach
-    ADD CONSTRAINT fk_teach_prof FOREIGN KEY (professor_id) REFERENCES professors(professor_id) ON DELETE CASCADE,
-    ADD CONSTRAINT fk_teach_course FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE;
+CREATE TABLE library_books (
+                               book_id SERIAL PRIMARY KEY,
+                               isbn char(13),
+                               title varchar(200),
+                               author varchar(100),
+                               publisher varchar(100),
+                               publication_date date,
+                               price decimal(10, 2),
+                               is_available boolean,
+                               acquisition_timestamp timestamp
+);
 
+CREATE TABLE student_book_loans (
+                                    loan_id SERIAL PRIMARY KEY,
+                                    student_id int,
+                                    book_id int,
+                                    loan_date date,
+                                    due_date date,
+                                    return_date date,
+                                    fine_amount decimal(6, 2),
+                                    loan_status varchar(20)
+);
+--Task 4.2:
 ALTER TABLE professors
-    ADD CONSTRAINT chk_hindex_nonneg CHECK (h_index IS NULL OR h_index >= 0);
+    ADD COLUMN department_id int;
 
 ALTER TABLE students
-    ADD CONSTRAINT uq_students_email UNIQUE (email);
+    ADD COLUMN advisor_id int;
 
-CREATE INDEX IF NOT EXISTS idx_students_last_first ON students(last_name, first_name);
-CREATE INDEX IF NOT EXISTS idx_courses_active ON courses(is_active);
-CREATE INDEX IF NOT EXISTS idx_enr_student_course ON enrollments(student_id, course_id);
+ALTER TABLE courses
+    ADD COLUMN department_id int;
 
+CREATE TABLE grade_scale (
+                             grade_id SERIAL PRIMARY KEY,
+                             letter_grade char(2),
+                             min_percentage decimal(4, 1),
+                             max_percentage decimal(4, 1),
+                             gpa_points decimal(3, 2)
+);
+
+CREATE TABLE semester_calendar (
+                                   semester_id SERIAL PRIMARY KEY,
+                                   semester_name varchar(20),
+                                   academic_year int,
+                                   start_date date,
+                                   end_date date,
+                                   registration_deadline timestamptz,
+                                   is_current boolean
+);
 -- PART 5: Cleanup Operations
-DROP TABLE IF EXISTS enrollments CASCADE;
-DROP TABLE IF EXISTS teach CASCADE;
-DROP TABLE IF EXISTS courses CASCADE;
-DROP TABLE IF EXISTS professors CASCADE;
-DROP TABLE IF EXISTS students CASCADE;
+DROP TABLE IF EXISTS student_book_loans;
+DROP TABLE IF EXISTS library_books;
+DROP TABLE IF EXISTS grade_scale;
 
+CREATE TABLE grade_scale (
+                             grade_id SERIAL PRIMARY KEY,
+                             letter_grade char(2),
+                             min_percentage decimal(4, 1),
+                             max_percentage decimal(4, 1),
+                             gpa_points decimal(3, 2),
+                             description text
+);
+
+DROP TABLE IF EXISTS semester_calendar CASCADE;
+
+CREATE TABLE semester_calendar (
+                                   semester_id SERIAL PRIMARY KEY,
+                                   semester_name varchar(20),
+                                   academic_year int,
+                                   start_date date,
+                                   end_date date,
+                                   registration_deadline timestamptz,
+                                   is_current boolean
+);
+
+--Task 5.2:
+DROP DATABASE IF EXISTS university_test;
+DROP DATABASE IF EXISTS university_distributed;
+
+CREATE DATABASE university_backup
+    TEMPLATE university_main;
