@@ -69,11 +69,9 @@ SELECT e.emp_name, d.dept_name, d.location
 FROM employees e
 INNER JOIN departments d ON e.dept_id = d.dept_id;
 --Number of rows: 4
---Why Tom Brown is not included:
 --INNER JOIN excludes rows where dept_id is missing (NULL does not equal any value).
 
 --Ex 3.2
-
 SELECT emp_name, dept_name, location
 FROM employees
 INNER JOIN departments USING (dept_id);
