@@ -68,8 +68,7 @@ LEFT JOIN employees e ON d.dept_id = e.dept_id
 GROUP BY d.dept_name;
 
 --Ex 2.3
-CREATE VIEW project_overview AS
-SELECT 
+CREATE VIEW project_overview AS SELECT 
     p.project_name,
     p.budget,
     d.dept_name,
@@ -120,12 +119,12 @@ ALTER VIEW high_earners RENAME to top_performers;
 
 --Ex 3.3
 CREATE TEMP VIEW temp_view AS
-SELECT 
+SELECT
     e.emp_name,
     e.salary,
     d.dept_name
 FROM employees e
-JOIN departments d 
+JOIN departments d
     ON e.dept_id = d.dept_id
 WHERE e.salary < 50000;
 
@@ -188,9 +187,7 @@ INSERT INTO employees (emp_id, emp_name, dept_id, salary)
 VALUES (8, 'Charlie Brown', 101, 54000);
 
 SELECT * FROM dept_summary_mv WHERE dept_id = 101;
-
 REFRESH MATERIALIZED VIEW dept_summary_mv;
-
 SELECT * FROM dept_summary_mv WHERE dept_id = 101;
 
 --Ex 5.3
@@ -199,7 +196,7 @@ REFRESH MATERIALIZED VIEW CONCURRENTLY dept_summary_mv;
 
 --Ex 5.4
 CREATE MATERIALIZED VIEW project_stats_mv AS
-SELECT 
+SELECT
     p.project_name,
     p.budget,
     d.dept_name,
@@ -236,13 +233,8 @@ GRANT SELECT, INSERT ON employees TO report_user;
 
 --Ex 6.4
 
-CREATE ROLE hr_team;
-CREATE ROLE finance_team;
-CREATE ROLE it_team;
+-- Step 1
 
-CREATE ROLE hr_user1 LOGIN PASSWORD 'hr001';
-CREATE ROLE hr_user2 LOGIN PASSWORD 'hr002';
-CREATE ROLE finance_user1 LOGIN PASSWORD 'fin001';
 
 GRANT hr_team TO hr_user1, hr_user2;
 GRANT finance_team TO finance_user1;
@@ -269,9 +261,6 @@ ALTER ROLE data_viewer CONNECTION LIMIT 5;
 
 --Part 7
 --Ex 7.1
-CREATE ROLE read_only;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO read_only;
-
 CREATE ROLE junior_analyst LOGIN PASSWORD 'junior123';
 CREATE ROLE senior_analyst LOGIN PASSWORD 'senior123';
 
@@ -315,7 +304,7 @@ GRANT SELECT ON finance_employee_view TO finance_team;
 
 
 --Part 8
---Ex 8.1
+--Ex 8.1 Create a comprehensive dashboard view named dept_dashboard for department managers showing:
 CREATE OR REPLACE VIEW dept_dashboard AS
 SELECT
     d.dept_name,
