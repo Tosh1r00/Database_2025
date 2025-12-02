@@ -292,8 +292,6 @@ SELECT * FROM index_documentation;
 
 --Summary Questions
 /*
-1) What is the default index type in PostgreSQL?
-B-Tree
 
 2)Name three scenarios where you should create an index:
 частые фильтры в WHERE
